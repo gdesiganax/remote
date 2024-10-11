@@ -21,8 +21,7 @@ def speak():
     audio = BytesIO()
     tts.write_to_fp(audio)
     audio.seek(0)
-    #tts = gTTS(text=text, lang=language)
-    #tts.save('static/speech.mp3')
+
 
     # Send the generated speech files
     return send_file('static/speech.mp3', as_attachment=True)
