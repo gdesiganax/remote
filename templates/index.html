@@ -7,9 +7,32 @@
 </head>
 <body>
     <h1>Enter text to convert to speech</h1>
-    <form action="/speak" method="POST">
-        <textarea name="text" rows="4" cols="50" placeholder="Enter text here..."></textarea><br><br>
+    <form id="tts-form">
+        <textarea name="text" id="text-input" rows="4" cols="50" placeholder="Enter text here..."></textarea><br><br>
         <button type="submit">Convert to Speech</button>
     </form>
+
+    <h2>Speech Output:</h2>
+    <audio id="audio-output" controls></audio>
+
+    <script>
+        document.getElementById('tts-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const text = document.getElementById('text-input').value;
+            const audio = document.getElementById('audio-output');
+
+            fetch('/speak', {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(this))
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                audio.src = url;
+                audio.play();
+            });
+        });
+    </script>
 </body>
 </html>

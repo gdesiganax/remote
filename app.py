@@ -24,7 +24,7 @@ def speak():
 
 
     # Send the generated speech files
-    return send_file('static/speech.mp3', as_attachment=True)
+    return send_file(audio, mimetype='audio/mp3')
 
 
 if __name__ == '__main__':
