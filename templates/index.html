@@ -4,17 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text to Speech</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Enter text to convert to speech</h1>
-    <form id="tts-form">
-        <textarea name="text" id="text-input" rows="4" cols="50" placeholder="Enter text here..."></textarea><br><br>
-        <button type="submit" style="background-color: darkred; padding: 10px">Convert to Speech</button>
-    </form>
+    <div class="container">
+        <h1 class="mt-5 text-center">Text to Speech Converter</h1>
 
-    <h2>Speech Output:</h2>
-    <audio id="audio-output" controls></audio>
+        <!-- Form to input text -->
+        <form id="tts-form" class="mt-4">
+            <div class="form-group">
+                <label for="text-input">Enter text to convert to speech:</label>
+                <textarea class="form-control" id="text-input" name="text" rows="4" placeholder="Type your text here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Convert to Speech</button>
+        </form>
 
+        <!-- Audio output -->
+        <div class="mt-4">
+            <h2>Speech Output:</h2>
+            <audio id="audio-output" controls class="w-100"></audio>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript to handle form submission and play audio -->
     <script>
         document.getElementById('tts-form').addEventListener('submit', function(event) {
             event.preventDefault();
