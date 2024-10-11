@@ -19,7 +19,7 @@ def speak():
     tts = gTTS(text=text, lang=language)
     tts.save('static/speech.mp3')
 
-    # Send the generated speech file
+    # Send the generated speech files
     return send_file('static/speech.mp3', as_attachment=True)
 
 
