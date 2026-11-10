@@ -1,0 +1,174 @@
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(196, 30, 58, 0.08) 0%, transparent 60%),
+    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+}
+
+.corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--crimson);
+  opacity: 0.5;
+}
+
+.corner.top-left {
+  top: 24px;
+  left: 24px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner.top-right {
+  top: 24px;
+  right: 24px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner.bottom-left {
+  bottom: 24px;
+  left: 24px;
+  border-right: none;
+  border-top: none;
+}
+
+.corner.bottom-right {
+  bottom: 24px;
+  right: 24px;
+  border-left: none;
+  border-top: none;
+}
+
+.loading-content {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.katana-wrapper {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.katana-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 12px rgba(196, 30, 58, 0.5));
+}
+
+.orbit {
+  animation: ninja-spin 12s linear infinite;
+  transform-origin: center;
+}
+
+.blade {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw-sword 1.4s ease forwards 0.3s;
+}
+
+.tip {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.loading-title {
+  font-family: var(--font-jp);
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: var(--crimson);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+  text-shadow: 0 0 40px rgba(196, 30, 58, 0.6);
+  animation: text-reveal 1s ease forwards;
+}
+
+.loading-romaji {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.55em;
+  color: var(--gold);
+  margin-bottom: 2.8rem;
+  text-transform: uppercase;
+}
+
+.progress-container {
+  width: min(320px, 80vw);
+  margin: 0 auto;
+}
+
+.progress-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson), var(--crimson-glow));
+  border-radius: 2px;
+  transition: width 0.2s ease;
+  box-shadow: 0 0 12px var(--crimson);
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+}
+
+.progress-status {
+  letter-spacing: 0.05em;
+}
+
+.progress-percent {
+  font-family: var(--font-display);
+  color: var(--crimson);
+}
+
+/* Exit slash */
+.exit-slash {
+  position: absolute;
+  top: 50%;
+  left: -20%;
+  width: 140%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--crimson) 20%,
+    #fff 50%,
+    var(--crimson) 80%,
+    transparent
+  );
+  transform: rotate(-18deg);
+  animation: slash 0.6s ease-out forwards;
+  z-index: 10;
+  box-shadow: 0 0 20px var(--crimson-glow);
+}

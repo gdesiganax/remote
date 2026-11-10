@@ -1,0 +1,55 @@
+.section-header {
+  margin-bottom: 0.25rem;
+}
+
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-jp);
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  color: var(--crimson);
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+
+.chapter-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+.chapter-sep {
+  opacity: 0.5;
+  letter-spacing: 0;
+}
+
+.slice-heading-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.slice-heading {
+  /* inherits .section-title from index.css */
+  display: block;
+  will-change: clip-path, transform, opacity;
+}
+
+.slice-slash {
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--crimson) 0%, var(--crimson) 40%, transparent 100%);
+  transform-origin: left center;
+  box-shadow: 0 0 12px var(--crimson-glow);
+}
+
+.section-header .section-lead {
+  margin-top: 0.25rem;
+  margin-bottom: 2.25rem;
+}

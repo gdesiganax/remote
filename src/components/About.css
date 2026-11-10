@@ -1,0 +1,83 @@
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 3.5rem;
+  align-items: start;
+  margin-top: 0.5rem;
+}
+
+.about-main p {
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+.about-main .about-lead {
+  color: var(--offwhite);
+  font-size: 1.1rem;
+}
+
+.about-philosophy {
+  font-family: var(--font-display);
+  font-size: 1.15rem !important;
+  color: var(--gold) !important;
+  font-style: italic;
+  border-left: 2px solid var(--crimson);
+  padding-left: 1.25rem;
+  margin: 1.8rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+.about-main strong {
+  color: var(--offwhite);
+  font-weight: 600;
+}
+
+.about-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.4rem 1.5rem;
+  transition: border-color 0.3s ease;
+}
+
+.about-card:hover {
+  border-color: rgba(181, 31, 43, 0.4);
+}
+
+.about-card-label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  font-family: var(--font-display);
+  margin-bottom: 0.45rem;
+}
+
+.about-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.03em;
+}
+
+.about-card p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}

@@ -1,0 +1,38 @@
+.creative-content {
+  max-width: 720px;
+}
+
+.creative-lead {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 1.75rem;
+}
+
+.creative-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+}
+
+.creative-tools span {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--muted);
+  transition: border-color 0.25s, color 0.25s;
+}
+
+.creative-tools span:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.creative-note {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+  border-left: 2px solid var(--crimson);
+  padding-left: 1rem;
+}
