@@ -1,174 +1,329 @@
+/* ───────── Loading / Enter screen ─────────
+   Always dark, independent of the site theme. */
 .loading-screen {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: var(--bg-deep);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.7s ease, visibility 0.7s ease;
+  overflow: hidden;
+  color: #e8e5df;
+  background: transparent;
 }
 
-.loading-screen.fade-out {
+/* Two halves share the same scene; split along a diagonal for the slice */
+.ls-half {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  transition: transform 1s cubic-bezier(0.7, 0, 0.2, 1), opacity 1s ease;
+  will-change: transform;
+}
+
+.ls-half-top {
+  clip-path: polygon(0 0, 100% 0, 100% 38.3%, 0 62.3%);
+}
+
+.ls-half-bottom {
+  clip-path: polygon(0 61.7%, 100% 37.7%, 100% 100%, 0 100%);
+}
+
+.phase-slicing .ls-half-top {
+  transform: translate(-14%, -70%) rotate(-3deg);
+  opacity: 0.6;
+}
+
+.phase-slicing .ls-half-bottom {
+  transform: translate(14%, 70%) rotate(-3deg);
+  opacity: 0.6;
+}
+
+/* Samurai portrait — fades in dark, brightens on Enter.
+   Fitted to the screen on solid black; edges fade into the black. */
+.ls-image {
+  position: absolute;
+  inset: 0;
+  background-color: #000;
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  filter: brightness(0.28) saturate(0.7) contrast(1.05);
+  transition:
+    opacity 2s ease,
+    filter 0.9s ease;
 }
 
-.loading-bg {
+/* The box is sized to the portrait itself (ratio 1122:1402), so the
+   edge fade lands on the image edges rather than the screen edges. */
+.ls-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, 80vh);
+  width: min(100vw, 80dvh);
+  aspect-ratio: 1122 / 1402;
+  background-image: var(--ls-bg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+  transform: scale(0.97);
+  transition: transform 6s ease-out;
+}
+
+/* Portrait screens (phones): enlarge so the image fills more of the height.
+   Capped at 115vw wide (trims at most ~7% per side) and never taller
+   than the screen. */
+@media (orientation: portrait) {
+  .ls-image::after {
+    width: min(115vw, 80vh);
+    width: min(115vw, 80dvh);
+  }
+}
+
+.ls-image.visible {
+  opacity: 1;
+}
+
+.ls-image.visible::after {
+  transform: scale(1);
+}
+
+.phase-entering .ls-image,
+.phase-slicing .ls-image {
+  filter: brightness(1.05) saturate(1.05) contrast(1.05);
+}
+
+.ls-vignette {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at center, rgba(196, 30, 58, 0.08) 0%, transparent 60%),
-    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.75) 100%),
+    radial-gradient(circle at center, rgba(181, 31, 43, 0.12), transparent 55%);
+  transition: opacity 0.9s ease;
 }
 
+.phase-entering .ls-vignette,
+.phase-slicing .ls-vignette {
+  opacity: 0.35;
+}
+
+/* Corners */
 .corner {
   position: absolute;
   width: 40px;
   height: 40px;
-  border: 1.5px solid var(--crimson);
-  opacity: 0.5;
+  border: 1.5px solid #b51f2b;
+  opacity: 0.6;
+  z-index: 2;
+  transition: opacity 0.5s ease;
+}
+.corner.top-left { top: 24px; left: 24px; border-right: none; border-bottom: none; }
+.corner.top-right { top: 24px; right: 24px; border-left: none; border-bottom: none; }
+.corner.bottom-left { bottom: 24px; left: 24px; border-right: none; border-top: none; }
+.corner.bottom-right { bottom: 24px; right: 24px; border-left: none; border-top: none; }
+
+.phase-entering .corner,
+.phase-slicing .corner {
+  opacity: 0;
 }
 
-.corner.top-left {
-  top: 24px;
-  left: 24px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.corner.top-right {
-  top: 24px;
-  right: 24px;
-  border-left: none;
-  border-bottom: none;
-}
-
-.corner.bottom-left {
-  bottom: 24px;
-  left: 24px;
-  border-right: none;
-  border-top: none;
-}
-
-.corner.bottom-right {
-  bottom: 24px;
-  right: 24px;
-  border-left: none;
-  border-top: none;
-}
-
-.loading-content {
+/* Center content */
+.ls-content {
   position: relative;
-  text-align: center;
-  z-index: 1;
-  animation: fadeInUp 0.8s ease forwards;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  animation: ls-rise 1s ease both 0.3s;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.katana-wrapper {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 1.5rem;
-  animation: float 3s ease-in-out infinite;
+.phase-entering .ls-content,
+.phase-slicing .ls-content {
+  opacity: 0;
+  transform: scale(1.12);
 }
 
-.katana-svg {
+/* Ring */
+.ls-ring {
+  position: relative;
+  width: clamp(150px, 34vw, 190px);
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 50%;
+  background: rgba(5, 5, 6, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  color: inherit;
+  cursor: default;
+  padding: 0;
+  transition: transform 0.3s ease, box-shadow 0.4s ease;
+}
+
+.phase-ready .ls-ring {
+  cursor: pointer;
+  animation: ls-pulse 2.2s ease-in-out infinite;
+}
+
+.phase-ready .ls-ring:hover {
+  transform: scale(1.05);
+}
+
+.ls-ring:focus-visible {
+  outline: 2px solid #c5a46d;
+  outline-offset: 6px;
+}
+
+.ls-ring-svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 12px rgba(196, 30, 58, 0.5));
+  transform: rotate(-90deg); /* start filling from 12 o'clock */
+  overflow: visible;
 }
 
-.orbit {
-  animation: ninja-spin 12s linear infinite;
-  transform-origin: center;
+.ls-ring-track {
+  fill: none;
+  stroke: rgba(232, 229, 223, 0.12);
+  stroke-width: 2;
 }
 
-.blade {
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  animation: draw-sword 1.4s ease forwards 0.3s;
+.ls-ring-fill {
+  fill: none;
+  stroke: #b51f2b;
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(181, 31, 43, 0.9));
+  transition: stroke 0.4s ease;
 }
 
-.tip {
-  animation: pulse-glow 1.5s ease-in-out infinite;
+.phase-ready .ls-ring-fill {
+  stroke: #d42a37;
 }
 
-.loading-title {
-  font-family: var(--font-jp);
-  font-size: 4.5rem;
-  font-weight: 700;
-  color: var(--crimson);
-  line-height: 1;
-  margin-bottom: 0.2rem;
-  text-shadow: 0 0 40px rgba(196, 30, 58, 0.6);
-  animation: text-reveal 1s ease forwards;
+.ls-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.loading-romaji {
+.ls-percent {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: clamp(1.6rem, 5vw, 2rem);
+  color: #e8e5df;
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-enter {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 3.6vw, 1.35rem);
+  letter-spacing: 0.35em;
+  padding-left: 0.35em; /* optically center the tracked text */
+  color: #c5a46d;
+  text-shadow: 0 0 18px rgba(197, 164, 109, 0.6);
+  animation: ls-fade 0.6s ease both;
+}
+
+.ls-name {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
   letter-spacing: 0.55em;
-  color: var(--gold);
-  margin-bottom: 2.8rem;
+  padding-left: 0.55em;
+  color: #c5a46d;
   text-transform: uppercase;
 }
 
-.progress-container {
-  width: min(320px, 80vw);
-  margin: 0 auto;
-}
-
-.progress-track {
-  height: 3px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--crimson), var(--crimson-glow));
-  border-radius: 2px;
-  transition: width 0.2s ease;
-  box-shadow: 0 0 12px var(--crimson);
-}
-
-.progress-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: var(--ink-dim);
+.ls-hint {
   font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: rgba(232, 229, 223, 0.7);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.2s;
 }
 
-.progress-status {
-  letter-spacing: 0.05em;
+.ls-hint.visible {
+  opacity: 1;
 }
 
-.progress-percent {
-  font-family: var(--font-display);
-  color: var(--crimson);
+.ls-hint kbd {
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.15em 0.5em;
+  margin: 0 0.25em;
+  border: 1px solid rgba(197, 164, 109, 0.6);
+  border-radius: 4px;
+  color: #c5a46d;
 }
 
-/* Exit slash */
-.exit-slash {
+/* Slash line drawn across the diagonal seam */
+.ls-slash {
   position: absolute;
-  top: 50%;
-  left: -20%;
-  width: 140%;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--crimson) 20%,
-    #fff 50%,
-    var(--crimson) 80%,
-    transparent
-  );
-  transform: rotate(-18deg);
-  animation: slash 0.6s ease-out forwards;
-  z-index: 10;
-  box-shadow: 0 0 20px var(--crimson-glow);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.ls-slash line {
+  stroke: #fff;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 8px #b51f2b) drop-shadow(0 0 18px rgba(181, 31, 43, 0.8));
+}
+
+.phase-slicing .ls-slash {
+  animation: ls-slash-fade 0.9s ease forwards;
+}
+
+.phase-slicing .ls-slash line {
+  animation: ls-slash-draw 0.22s ease-out forwards;
+}
+
+@keyframes ls-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ls-fade {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ls-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(181, 31, 43, 0.35); }
+  50% { box-shadow: 0 0 0 14px rgba(181, 31, 43, 0); }
+}
+
+@keyframes ls-slash-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ls-slash-fade {
+  0% { opacity: 1; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Reduced motion: no slice, just fade the screen away */
+.loading-screen.reduced.phase-slicing .ls-half {
+  transform: none;
+  opacity: 0;
 }

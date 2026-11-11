@@ -3,27 +3,30 @@ import { kickerReveal, sliceIn, fadeUp } from '../lib/motion';
 import './SectionHeader.css';
 
 interface SectionHeaderProps {
+  /** id for the heading, so sections can reference it with aria-labelledby */
+  id?: string;
   number: string;
   kicker: string;
   title: string;
   lead?: string;
 }
 
-export default function SectionHeader({ number, kicker, title, lead }: SectionHeaderProps) {
+export default function SectionHeader({ id, number, kicker, title, lead }: SectionHeaderProps) {
   return (
     <div className="section-header">
       <motion.p className="section-kicker" variants={kickerReveal}>
         <span className="chapter-num">{number}</span>
-        <span className="chapter-sep">—</span>
+        <span className="chapter-sep" aria-hidden="true">—</span>
         <span>{kicker}</span>
       </motion.p>
 
       <div className="slice-heading-wrap">
-        <motion.h2 className="section-title slice-heading" variants={sliceIn}>
+        <motion.h2 id={id} className="section-title slice-heading" variants={sliceIn}>
           {title}
         </motion.h2>
         {/* Slash accent that draws under the title */}
         <motion.div
+          aria-hidden="true"
           className="slice-slash"
           variants={{
             hidden: { scaleX: 0, opacity: 0 },

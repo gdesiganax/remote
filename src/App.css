@@ -8,91 +8,71 @@
   pointer-events: none;
 }
 
-/* Stronger katana slash + multi-crack transition */
+/* ───────── Section transition ─────────
+   Two panels sweep in along a diagonal, meet on a fine crimson seam while the
+   page jumps to the new section underneath, then continue through and exit.
+   Total 2s (TRANSITION_MS in App.tsx); fully covered from 25% to 75%. */
 .page-transition {
+  --pt-duration: 2s;
   position: fixed;
   inset: 0;
   z-index: 9000;
   pointer-events: none;
-  opacity: 0;
   visibility: hidden;
+  overflow: hidden;
 }
 
 .page-transition.active {
-  opacity: 1;
   visibility: visible;
 }
 
-.slash-blade {
+.pt-panel {
   position: absolute;
-  top: 48%;
-  left: -35%;
-  width: 170%;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--crimson) 15%,
-    #fff 48%,
-    var(--crimson) 85%,
-    transparent 100%
-  );
-  transform: rotate(-20deg) scaleX(0);
-  transform-origin: center;
-  box-shadow:
-    0 0 20px var(--crimson-glow),
-    0 0 50px rgba(181, 31, 43, 0.6),
-    0 0 90px rgba(181, 31, 43, 0.3);
+  inset: -2px;
+  background: var(--charcoal);
+  will-change: transform;
 }
 
-.slash-blade.secondary {
-  top: 52%;
-  height: 2px;
-  transform: rotate(-12deg) scaleX(0);
-  opacity: 0.7;
-  box-shadow: 0 0 15px var(--crimson-glow);
+.pt-panel-a {
+  clip-path: polygon(0 0, 100% 0, 100% 38.2%, 0 62.2%);
+  transform: translateX(-105%);
 }
 
-.page-transition.active .slash-blade:not(.secondary) {
-  animation: blade-slash 0.65s cubic-bezier(0.15, 0.85, 0.25, 1) forwards;
+.pt-panel-b {
+  clip-path: polygon(0 61.8%, 100% 37.8%, 100% 100%, 0 100%);
+  transform: translateX(105%);
 }
 
-.page-transition.active .slash-blade.secondary {
-  animation: blade-slash-alt 0.7s cubic-bezier(0.15, 0.85, 0.25, 1) 0.04s forwards;
+.page-transition.active .pt-panel-a {
+  animation: pt-sweep-a var(--pt-duration) cubic-bezier(0.77, 0, 0.18, 1) forwards;
 }
 
-.slash-crack {
+.page-transition.active .pt-panel-b {
+  animation: pt-sweep-b var(--pt-duration) cubic-bezier(0.77, 0, 0.18, 1) forwards;
+}
+
+.pt-seam {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(108deg, transparent 47%, rgba(181, 31, 43, 0.35) 49%, transparent 51.5%),
-    linear-gradient(72deg, transparent 44%, rgba(197, 164, 109, 0.2) 50%, transparent 56%);
+  width: 100%;
+  height: 100%;
   opacity: 0;
 }
 
-.slash-crack.alt {
-  background:
-    linear-gradient(95deg, transparent 40%, rgba(181, 31, 43, 0.2) 48%, transparent 55%),
-    linear-gradient(15deg, transparent 50%, rgba(255, 255, 255, 0.06) 52%, transparent 58%);
+.pt-seam line {
+  stroke: var(--crimson);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
-.page-transition.active .slash-crack {
-  animation: crack-flash 0.65s ease forwards;
+.page-transition.active .pt-seam {
+  animation: pt-seam-fade var(--pt-duration) ease forwards;
 }
 
-.page-transition.active .slash-crack.alt {
-  animation: crack-flash 0.7s ease 0.05s forwards;
-}
-
-.slash-ink {
-  position: absolute;
-  inset: 0;
-  background: var(--obsidian);
-  opacity: 0;
-}
-
-.page-transition.active .slash-ink {
-  animation: ink-flash 0.65s ease forwards;
+.page-transition.active .pt-seam line {
+  animation: pt-seam-draw var(--pt-duration) cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .chapter-flash {
@@ -103,95 +83,81 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  z-index: 5;
-  animation: chapter-appear 0.7s ease forwards;
+  gap: 0.6rem;
+  z-index: 2;
+  opacity: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.page-transition.active .chapter-flash {
+  animation: pt-label var(--pt-duration) ease forwards;
 }
 
 .flash-num {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  padding-left: 0.4em;
   color: var(--gold);
+}
+
+.flash-count {
+  margin-top: 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+
+.flash-count-num {
+  display: inline-block;
+  min-width: 3ch;
+  text-align: left;
 }
 
 .flash-name {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4.5vw, 2.5rem);
-  letter-spacing: 0.14em;
+  font-size: clamp(1.2rem, 3.6vw, 1.9rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  padding-left: 0.18em;
   text-transform: uppercase;
   color: var(--offwhite);
-  text-shadow: 0 0 50px rgba(181, 31, 43, 0.65);
 }
 
-@keyframes blade-slash {
-  0% {
-    transform: rotate(-20deg) scaleX(0);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(-20deg) scaleX(1.35);
-    opacity: 0;
-  }
+@keyframes pt-sweep-a {
+  0% { transform: translateX(-105%); }
+  25%, 75% { transform: translateX(0); }
+  100% { transform: translateX(105%); }
 }
 
-@keyframes blade-slash-alt {
-  0% {
-    transform: rotate(-12deg) scaleX(0);
-    opacity: 0;
-  }
-  25% {
-    opacity: 0.85;
-  }
-  100% {
-    transform: rotate(-12deg) scaleX(1.2);
-    opacity: 0;
-  }
+@keyframes pt-sweep-b {
+  0% { transform: translateX(105%); }
+  25%, 75% { transform: translateX(0); }
+  100% { transform: translateX(-105%); }
 }
 
-@keyframes crack-flash {
-  0% {
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+@keyframes pt-seam-draw {
+  0%, 20% { stroke-dashoffset: 1; }
+  36%, 100% { stroke-dashoffset: 0; }
 }
 
-@keyframes ink-flash {
-  0% {
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.95;
-  }
-  100% {
-    opacity: 0;
-  }
+@keyframes pt-seam-fade {
+  0%, 18% { opacity: 0; }
+  25%, 72% { opacity: 1; }
+  80%, 100% { opacity: 0; }
 }
 
-@keyframes chapter-appear {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.85);
-    filter: blur(12px);
-  }
-  30% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.08);
-    filter: blur(6px);
-  }
+@keyframes pt-label {
+  0%, 24% { opacity: 0; transform: translate(-50%, calc(-50% + 10px)); }
+  32%, 70% { opacity: 1; transform: translate(-50%, -50%); }
+  78%, 100% { opacity: 0; transform: translate(-50%, calc(-50% - 8px)); }
 }
 
 .section-dots {
@@ -202,26 +168,37 @@
   z-index: 800;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.2rem;
 }
 
+/* 24px hit area with an 8px visible dot */
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: none;
   border-radius: 50%;
-  border: 1px solid rgba(128, 128, 128, 0.4);
   background: transparent;
   cursor: pointer;
   padding: 0;
+}
+
+.dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(128, 128, 128, 0.55);
   transition: all 0.3s ease;
 }
 
-.dot:hover {
+.dot:hover::before {
   border-color: var(--crimson);
   background: rgba(181, 31, 43, 0.3);
 }
 
-.dot.active {
+.dot.active::before {
   background: var(--crimson);
   border-color: var(--crimson);
   box-shadow: 0 0 12px var(--crimson-glow);
@@ -244,11 +221,6 @@
   font-size: 0.85rem;
 }
 
-.footer-kanji {
-  font-family: var(--font-jp);
-  font-size: 1.3rem;
-  color: var(--crimson);
-}
 
 @media (max-width: 900px) {
   .section-dots {

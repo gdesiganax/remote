@@ -1,77 +1,56 @@
-export interface SkillCategory {
-  id: string;
-  title: string;
+/**
+ * Skills grouped by depth of experience rather than percentage ratings.
+ * Placement reflects the technologies used in shipped projects (ReviewPulse,
+ * TravelPayy) versus ones used occasionally or explored.
+ */
+export interface SkillGroup {
+  label: string;
   items: string[];
 }
 
-export const skillCategories: SkillCategory[] = [
+export interface SkillTier {
+  id: string;
+  title: string;
+  summary: string;
+  groups: SkillGroup[];
+}
+
+export const skillTiers: SkillTier[] = [
   {
-    id: 'backend',
-    title: 'Backend Engineering',
-    items: [
-      'PHP',
-      'Python',
-      'Flask',
-      'MySQL',
-      'PDO',
-      'REST API development',
-      'Database-driven applications',
-      'Backend business logic',
-      'Authentication & workflows',
+    id: 'core',
+    title: 'Core strengths',
+    summary: 'Used daily and in production systems I have built and maintain.',
+    groups: [
+      { label: 'Backend', items: ['PHP', 'Python', 'Flask', 'MySQL', 'REST API design'] },
+      {
+        label: 'Integration',
+        items: ['Google Business Profile & OAuth APIs', 'Paystack payments', 'Third-party API integration'],
+      },
+      {
+        label: 'Product',
+        items: ['SaaS application development', 'Authentication & business workflows', 'Database-driven web apps'],
+      },
+      { label: 'Frontend', items: ['JavaScript', 'HTML5', 'CSS3', 'Responsive interfaces'] },
     ],
   },
   {
-    id: 'frontend',
-    title: 'Frontend Engineering',
-    items: [
-      'HTML5',
-      'CSS3',
-      'JavaScript',
-      'TypeScript',
-      'React',
-      'Bootstrap',
-      'jQuery & AJAX',
-      'Responsive interfaces',
+    id: 'working',
+    title: 'Working experience',
+    summary: 'Used on real projects, comfortable delivering with them.',
+    groups: [
+      { label: 'Mobile', items: ['Flutter', 'Riverpod', 'go_router'] },
+      { label: 'Frontend', items: ['TypeScript', 'React', 'Bootstrap', 'jQuery & AJAX'] },
+      { label: 'AI', items: ['OpenAI API'] },
+      { label: 'CMS & tools', items: ['WordPress', 'Elementor', 'Git'] },
     ],
   },
   {
-    id: 'saas',
-    title: 'SaaS & Application Development',
-    items: [
-      'Custom SaaS platforms',
-      'Business management applications',
-      'Multi-user workflows',
-      'Third-party integrations',
-      'Payment gateway integration',
-      'Application maintenance',
+    id: 'familiar',
+    title: 'Familiarity',
+    summary: 'Explored or used in limited scope.',
+    groups: [
+      { label: 'AI ecosystems', items: ['Hugging Face', 'Replicate', 'Stable Diffusion'] },
+      { label: 'Cloud', items: ['AWS (basic exposure)'] },
     ],
-  },
-  {
-    id: 'ai',
-    title: 'AI & Integrations',
-    items: [
-      'OpenAI API integration',
-      'Hugging Face ecosystem',
-      'Replicate',
-      'Stable Diffusion ecosystem',
-      'AI-assisted application features',
-      'Third-party API integrations',
-    ],
-  },
-  {
-    id: 'mobile-cms',
-    title: 'Mobile & CMS',
-    items: [
-      'Flutter application development',
-      'WordPress development',
-      'Elementor',
-      'Custom website development',
-      'Website administration',
-    ],
-  },
-  {
-    id: 'tools',
-    title: 'Tools & Others',
-    items: ['Git', 'Basic AWS exposure', 'Adobe Photoshop', 'Adobe InDesign', 'Canva'],
   },
 ];

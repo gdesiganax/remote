@@ -8,7 +8,7 @@
   --gold: #C5A46D;
   --gold-soft: rgba(197, 164, 109, 0.12);
   --offwhite: #E8E5DF;
-  --muted: #777777;
+  --muted: #8c8c8c;
   --border: #1e2126;
   --card: #0e1013;
   --section-alt: #0a0c0f;
@@ -235,4 +235,45 @@ body {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* ───────── Accessibility ───────── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Sections / main receive programmatic focus only; no ring needed */
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2000;
+  padding: 0.7rem 1.1rem;
+  background: var(--crimson);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Shared tag / chip */
+.chip {
+  display: inline-block;
+  font-size: 0.74rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  letter-spacing: 0.02em;
 }

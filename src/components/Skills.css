@@ -4,56 +4,109 @@
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.25fr 1fr 0.85fr;
   gap: 1.25rem;
+  align-items: start;
 }
 
-.skill-category {
-  min-height: 220px;
+.skill-tier {
+  position: relative;
+}
+
+.tier-core {
+  border-top: 2px solid var(--crimson);
+}
+
+.tier-working {
+  border-top: 2px solid var(--gold);
+}
+
+.tier-familiar {
+  border-top: 2px dashed var(--border);
+}
+
+.tier-head {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tier-rank {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--offwhite);
+  opacity: 0.06;
+  line-height: 1;
 }
 
 .skill-cat-title {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   letter-spacing: 0.08em;
-  color: var(--gold);
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--border);
+  color: var(--offwhite);
+  margin-bottom: 0.35rem;
 }
 
-.skill-list {
-  list-style: none;
+.tier-summary {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.tier-groups {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 1rem;
 }
 
-.skill-list li {
-  font-size: 0.9rem;
+.tier-group dt {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.45rem;
+}
+
+.skill-chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.skill-chips li {
+  font-size: 0.82rem;
+  padding: 0.28rem 0.65rem;
+  border: 1px solid var(--border);
+  color: var(--offwhite);
+  opacity: 0.88;
+}
+
+.tier-core .skill-chips li {
+  border-color: rgba(181, 31, 43, 0.35);
+  background: var(--crimson-soft);
+}
+
+.tier-familiar .skill-chips li {
   color: var(--muted);
-  position: relative;
-  padding-left: 0.9rem;
-}
-
-.skill-list li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--crimson);
 }
 
 @media (max-width: 960px) {
   .skills-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tier-core {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .skills-grid {
     grid-template-columns: 1fr;
   }

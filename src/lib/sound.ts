@@ -3,6 +3,42 @@
 let audioCtx: AudioContext | null = null;
 let unlocked = false;
 
+const SOUND_KEY = 'samurai-sound';
+type Listener = (enabled: boolean) => void;
+const listeners = new Set<Listener>();
+
+function readPref(): boolean {
+  try {
+    return localStorage.getItem(SOUND_KEY) !== 'off';
+  } catch {
+    return true;
+  }
+}
+
+let soundEnabled = typeof window === 'undefined' ? true : readPref();
+
+/** Whether the user has sound effects switched on (persisted per browser). */
+export function isSoundEnabled(): boolean {
+  return soundEnabled;
+}
+
+export function setSoundEnabled(enabled: boolean): void {
+  soundEnabled = enabled;
+  try {
+    localStorage.setItem(SOUND_KEY, enabled ? 'on' : 'off');
+  } catch {
+    // storage unavailable (private mode): keep the in-memory value
+  }
+  listeners.forEach((fn) => fn(enabled));
+}
+
+export function subscribeSound(fn: Listener): () => void {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
 function getCtx(): AudioContext | null {
   if (typeof window === 'undefined') return null;
   if (!audioCtx) {
@@ -36,6 +72,7 @@ export async function unlockAudio(): Promise<void> {
 }
 
 export function playSlashSound(): void {
+  if (!soundEnabled) return;
   const ctx = getCtx();
   if (!ctx) return;
 

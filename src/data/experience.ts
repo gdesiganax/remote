@@ -24,7 +24,6 @@ export const experience: ExperienceItem[] = [
     id: 'gigtask',
     company: 'GigTask',
     role: 'Founder | Full-Stack Software Developer',
-    period: 'January 2016 – Present',
     points: [
       'Established and developed an independent digital technology venture.',
       'Undertake software development and digital solution projects.',
@@ -52,7 +51,7 @@ export const experience: ExperienceItem[] = [
   },
   {
     id: 'buff',
-    company: 'British Urban Film Festival',
+    company: 'British Urban Film Festival — United Kingdom',
     role: 'Web Designer / Website Manager',
     points: [
       'Worked on website design and management.',

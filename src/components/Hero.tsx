@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, sliceIn, kickerReveal } from '../lib/motion';
+import { RESUME_URL, SOCIAL_LINKS } from '../lib/site';
 import './Hero.css';
 
 interface HeroProps {
@@ -8,7 +9,7 @@ interface HeroProps {
 
 export default function Hero({ onNavigate }: HeroProps) {
   return (
-    <section id="home" className="full-section hero">
+    <section id="home" className="full-section hero" aria-label="Introduction">
       <div className="hero-atmosphere" aria-hidden="true">
         <div className="hero-fog" />
         <div className="hero-grid" />
@@ -24,26 +25,28 @@ export default function Hero({ onNavigate }: HeroProps) {
         >
           <motion.p className="hero-chapter" variants={kickerReveal}>
             <span className="chapter-num">01</span>
-            <span className="chapter-sep">—</span>
+            <span className="chapter-sep" aria-hidden="true">—</span>
             <span>The Awakening</span>
           </motion.p>
 
           <motion.div className="hero-badge" variants={fadeUp}>
-            <span className="badge-dot" />
-            Available for remote opportunities
+            <span className="badge-dot" aria-hidden="true" />
+            Open to remote software engineering roles
           </motion.div>
 
-          <motion.p className="hero-name" variants={fadeUp}>
+          <motion.h1 className="hero-name" variants={fadeUp}>
             Afeez Lukmon Bamidele
-          </motion.p>
+            <span className="sr-only">, Full-Stack Software Engineer</span>
+          </motion.h1>
 
           <div className="slice-heading-wrap hero-title-wrap">
-            <motion.h1 className="hero-headline slice-heading" variants={sliceIn}>
-              Building digital systems
+            <motion.p className="hero-headline slice-heading" variants={sliceIn}>
+              Backend systems and SaaS products,
               <br />
-              <span className="accent">with precision.</span>
-            </motion.h1>
+              <span className="accent">built with precision.</span>
+            </motion.p>
             <motion.div
+              aria-hidden="true"
               className="slice-slash"
               variants={{
                 hidden: { scaleX: 0, opacity: 0 },
@@ -57,37 +60,57 @@ export default function Hero({ onNavigate }: HeroProps) {
           </div>
 
           <motion.p className="hero-role" variants={fadeUp}>
-            Full-Stack Software Engineer · Backend Systems · SaaS · API & AI Integration
+            Full-Stack Software Engineer · Backend &amp; API Development · SaaS · AI Integration
           </motion.p>
 
           <motion.p className="hero-desc" variants={fadeUp}>
-            I design, engineer and develop digital products, backend systems and intelligent
-            applications that transform ideas into functional business solutions.
+            Founder and lead developer of <strong>ReviewPulse</strong> and <strong>TravelPayy</strong>. I design
+            data models, APIs and third-party integrations, including Google, payments and AI, and ship them as
+            working products.
           </motion.p>
 
           <motion.div className="hero-actions" variants={fadeUp}>
-            <button className="btn btn-primary" onClick={() => onNavigate('projects')}>
-              Explore My Work
+            <button type="button" className="btn btn-primary" onClick={() => onNavigate('projects')}>
+              View Case Studies
             </button>
-            <button className="btn btn-ghost" onClick={() => onNavigate('contact')}>
-              Let’s Connect
+            {RESUME_URL && (
+              <a className="btn btn-ghost" href={RESUME_URL} download>
+                Download CV
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M12 4v12M6 10l6 6 6-6M5 20h14" />
+                </svg>
+              </a>
+            )}
+            <button type="button" className="btn btn-ghost" onClick={() => onNavigate('contact')}>
+              Get in Touch
             </button>
           </motion.div>
 
-          <motion.div className="hero-meta" variants={fadeUp}>
+          <motion.dl className="hero-meta" variants={fadeUp}>
             <div className="meta-item">
-              <span className="meta-label">Location</span>
-              <span className="meta-value">Sagamu, Nigeria</span>
+              <dt className="meta-label">Specialism</dt>
+              <dd className="meta-value">Backend · SaaS · APIs</dd>
             </div>
             <div className="meta-item">
-              <span className="meta-label">Focus</span>
-              <span className="meta-value">Full-Stack · SaaS · AI</span>
+              <dt className="meta-label">Core stack</dt>
+              <dd className="meta-value">PHP · Python / Flask · MySQL</dd>
             </div>
             <div className="meta-item">
-              <span className="meta-label">Status</span>
-              <span className="meta-value gold">Open to opportunities</span>
+              <dt className="meta-label">Availability</dt>
+              <dd className="meta-value gold">Remote · International</dd>
             </div>
-          </motion.div>
+          </motion.dl>
+
+          <motion.ul className="hero-social" variants={fadeUp} aria-label="Profiles">
+            {SOCIAL_LINKS.filter((l) => l.label !== 'Fiverr').map((l) => (
+              <li key={l.label}>
+                <a href={l.href} target="_blank" rel="noopener noreferrer">
+                  {l.label}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </motion.ul>
         </motion.div>
       </div>
 
@@ -96,8 +119,8 @@ export default function Hero({ onNavigate }: HeroProps) {
         onClick={() => onNavigate('about')}
         aria-label="Scroll to about section"
       >
-        <span>Scroll</span>
-        <div className="scroll-line" />
+        <span aria-hidden="true">Scroll</span>
+        <span className="scroll-line" aria-hidden="true" />
       </button>
     </section>
   );
