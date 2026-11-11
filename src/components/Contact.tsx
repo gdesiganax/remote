@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { staggerContainer, fadeUp, crackIn } from '../lib/motion';
 import SectionHeader from './SectionHeader';

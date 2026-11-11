@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { staggerContainer, fadeUp, crackIn } from '../lib/motion';
+import { staggerContainer,  crackIn } from '../lib/motion';
 import SectionHeader from './SectionHeader';
 import './Creative.css';
 

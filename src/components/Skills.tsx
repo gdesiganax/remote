@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerFast, fadeUp, crackIn } from '../lib/motion';
+import { staggerContainer, staggerFast, crackIn } from '../lib/motion';
 import { skillCategories } from '../data/skills';
 import SectionHeader from './SectionHeader';
 import './Skills.css';
