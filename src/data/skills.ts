@@ -28,9 +28,14 @@ export const skillTiers: SkillTier[] = [
       },
       {
         label: 'Product',
-        items: ['SaaS application development', 'Authentication & business workflows', 'Database-driven web apps'],
+        items: [
+          'Business management systems',
+          'SaaS application development',
+          'Multi-user & role-based access',
+          'Database-driven web apps',
+        ],
       },
-      { label: 'Frontend', items: ['JavaScript', 'HTML5', 'CSS3', 'Responsive interfaces'] },
+      { label: 'Frontend', items: ['JavaScript', 'jQuery & AJAX', 'Bootstrap', 'HTML5', 'CSS3', 'Responsive interfaces'] },
     ],
   },
   {
@@ -39,9 +44,9 @@ export const skillTiers: SkillTier[] = [
     summary: 'Used on real projects, comfortable delivering with them.',
     groups: [
       { label: 'Mobile', items: ['Flutter', 'Riverpod', 'go_router'] },
-      { label: 'Frontend', items: ['TypeScript', 'React', 'Bootstrap', 'jQuery & AJAX'] },
+      { label: 'Frontend', items: ['TypeScript', 'React'] },
       { label: 'AI', items: ['OpenAI API'] },
-      { label: 'CMS & tools', items: ['WordPress', 'Elementor', 'Git'] },
+      { label: 'CMS & tools', items: ['WordPress', 'Elementor', 'Git', 'PDF generation (TCPDF)', 'Charts (ApexCharts)'] },
     ],
   },
   {

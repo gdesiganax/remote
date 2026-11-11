@@ -1,9 +1,11 @@
 /**
  * Project data.
  *
- * Case-study content for ReviewPulse and TravelPayy is drawn from the actual
- * source code (review_repute Flask app; Travelpayy_app Flutter client and the
- * p2p PHP API). Nothing here states users, revenue or transaction figures.
+ * Case-study content is drawn from the actual source code of each project
+ * (ReviewPulse: review_repute; TravelPayy: Travelpayy_app + p2p API;
+ * High Rocks: highrocks/portal; BioVent: vent_air; Crypto Wall: 1million)
+ * and from the public websites. Nothing here states users, revenue, cost
+ * savings or transaction figures. No client personal data is included.
  *
  * Screenshots: add real images to /public/images/projects/ and list them in
  * `screenshots`. The gallery only renders when at least one is present.
@@ -26,7 +28,8 @@ export interface CaseStudy {
   contributions: string[];
   architecture: string[];
   features: ProjectFeature[];
-  challenges: { title: string; detail: string }[];
+  /** Optional: only listed where the challenge is evident from the code. */
+  challenges?: { title: string; detail: string }[];
 }
 
 export interface Project {
@@ -35,6 +38,10 @@ export interface Project {
   role: string;
   tag: string;
   status?: string;
+  /** Client name/location for client work, e.g. "Brevard, North Carolina, USA" */
+  client?: string;
+  /** Development period, only when confirmed */
+  period?: string;
   description: string;
   tech: string[];
   liveUrl?: string;
@@ -189,6 +196,155 @@ export const projects: Project[] = [
           detail:
             'The Flutter app isolates tokens per environment, and release builds always point at production with no developer switcher.',
         },
+      ],
+    },
+  },
+  {
+    id: 'highrocks',
+    name: 'High Rocks Boys Camp Management System',
+    role: 'Sole Full-Stack Developer',
+    tag: 'Business Management System',
+    status: 'Live',
+    client: 'High Rocks Boys Camp · Brevard, North Carolina, USA',
+    period: 'c. 2023',
+    description:
+      'A complete camp management platform built from scratch to replace an expensive third-party product. It runs the camp’s operations, from campers, cabins, activities, trips and meals to staff, medical records and reporting, with a dedicated portal for parents.',
+    tech: ['PHP', 'MySQL', 'Bootstrap', 'JavaScript', 'jQuery', 'TCPDF'],
+    appUrl: 'https://my.highrocks.com/portal/pages/p_login',
+    featured: true,
+    screenshots: [],
+    caseStudy: {
+      overview:
+        'The camp was paying too much for an off-the-shelf camp management system. I built a replacement independently, using the previous system as a functional reference to understand its workflows, then designed and implemented my own database, backend and interfaces around how the camp actually operates.',
+      contributions: [
+        'Sole developer: requirements analysis, database design, backend, admin and parent interfaces.',
+        'Mapped the previous product’s workflows and rebuilt them as a custom application the camp owns.',
+        'Designed a relational MySQL schema covering campers, contacts, sessions, cabins, activities, trips, meals, medical records and staff.',
+        'Implemented separate authenticated areas and access levels for administrators, staff and parents.',
+        'Built operational reporting, PDF generation and email notifications.',
+      ],
+      architecture: [
+        'PHP application on MySQL with modular data-access includes per domain (campers, cabins, activities, sessions, medical, staff).',
+        'Two front doors: an administration and staff dashboard, and a separate parent portal with its own login and password recovery.',
+        'Bootstrap and jQuery interface with modal-based create, update and delete workflows across the system.',
+        'Server-side PDF generation (TCPDF) for reports and forms; file uploads for documents, invoices and profile images.',
+        'Bulk import and export for staff, sessions, activities and travel details.',
+      ],
+      features: [
+        { label: 'Administrator and staff accounts with role-based access', status: 'live' },
+        { label: 'Parent portal: camper details, forms, travel details, uploads, statements and invoices', status: 'live' },
+        { label: 'Camper records organised by session and year', status: 'live' },
+        { label: 'Cabin placement (accommodation) and cabin reports', status: 'live' },
+        { label: 'Activities, activity times and group activity scheduling', status: 'live' },
+        { label: 'Trips with vehicles, trip calendar and trip reports', status: 'live' },
+        { label: 'Meals and dietary needs management', status: 'live' },
+        { label: 'Health forms, medications, medical notes and treatment reports', status: 'live' },
+        { label: 'Incident reporting with charts by session, activity and trip', status: 'live' },
+        { label: 'Staff management, staff import and head-staff reports', status: 'live' },
+        { label: 'News, scheduled messages and email log', status: 'live' },
+        { label: 'Calendar and operational reports (activities, meals, medical, required forms)', status: 'live' },
+      ],
+      challenges: [
+        {
+          title: 'Replacing an established product',
+          detail:
+            'The new system had to cover the workflows staff already relied on. I used the previous software as a functional reference, then rebuilt each workflow on my own data model rather than copying its structure.',
+        },
+        {
+          title: 'Sensitive camper information',
+          detail:
+            'Medical histories, allergies, medications and emergency contacts sit behind authenticated areas, with a separate parent login and distinct access levels for staff and administrators.',
+        },
+        {
+          title: 'Seasonal, session-based operations',
+          detail:
+            'Campers, cabins, activities and trips are tied to sessions and years, so the camp can run each season cleanly while keeping history for returning families.',
+        },
+        {
+          title: 'Many multi-part forms',
+          detail:
+            'Medical, allergy, medication, insurance and background forms are split into structured sections that parents complete online and staff review in reports.',
+        },
+      ],
+    },
+  },
+  {
+    id: 'biovent',
+    name: 'BioVent Systems Portal',
+    role: 'Sole Full-Stack Developer',
+    tag: 'Custom Business Portal',
+    status: 'Live',
+    client: 'BioVent Systems · United Kingdom',
+    description:
+      'A custom web portal for BioVent Systems, a specialist company that uses biotechnology to maintain commercial kitchen extraction systems through bespoke grease management. Built from scratch to manage sites, audits and reporting across the different parties involved.',
+    tech: ['PHP', 'MySQL', 'Bootstrap', 'JavaScript', 'jQuery', 'ApexCharts', 'TCPDF'],
+    appUrl: 'https://portal.bioventsystems.com/login',
+    featured: true,
+    screenshots: [],
+    caseStudy: {
+      overview:
+        'BioVent needed one place to manage the sites it services and the audit work carried out on them, with each party seeing the information relevant to them. I developed the portal independently, end to end.',
+      contributions: [
+        'Sole developer of the portal, from database design to the user interface.',
+        'Designed the MySQL data model for users, sites, audits and issues.',
+        'Built role-specific dashboards and data visualisation with charting libraries.',
+        'Implemented PDF report generation, e-signatures and automated email reminders.',
+      ],
+      architecture: [
+        'PHP and MySQL application with Bootstrap and jQuery on the front end.',
+        'Role-based dashboards for different user types (engineers, franchisees, store managers and insurers).',
+        'Charts and graphs (ApexCharts) for visualising portal data.',
+        'Server-side PDF generation (TCPDF) for audit documents and printouts.',
+      ],
+      features: [
+        { label: 'User management with role-specific dashboards', status: 'live' },
+        { label: 'Store and site management', status: 'live' },
+        { label: 'Audit records with photo uploads', status: 'live' },
+        { label: 'Issue logging', status: 'live' },
+        { label: 'Electronic signatures', status: 'live' },
+        { label: 'PDF audit reports and printouts', status: 'live' },
+        { label: 'Automated audit reminder emails', status: 'live' },
+        { label: 'Charts and graphs for data visualisation', status: 'live' },
+      ],
+    },
+  },
+  {
+    id: 'cryptowall',
+    name: 'The Million Dollar Cryptocurrency Wall',
+    role: 'Full-Stack Developer',
+    tag: 'Interactive Advertising Platform',
+    status: 'Live',
+    description:
+      'An interactive advertising platform: a permanent public canvas of 1,000,000 pixels where crypto holders, projects and businesses buy pixel space, link it to a cryptocurrency and country, and appear on a live wall with real-time statistics.',
+    tech: ['PHP', 'MySQL', 'JavaScript', 'jQuery', 'Bootstrap', 'Stripe', 'PayPal', 'Coinbase Commerce', 'CoinMarketCap API'],
+    liveUrl: 'https://themilliondollarcryptocurrencywall.com/',
+    featured: true,
+    screenshots: [
+      {
+        src: '/images/projects/crypto-wall-home.webp',
+        alt: 'The Million Dollar Cryptocurrency Wall homepage showing the pixel wall and live placement statistics',
+      },
+    ],
+    caseStudy: {
+      overview:
+        'The wall sells advertising space pixel by pixel. Each placement is tied to a cryptocurrency, an exchange and a country, and the public page shows live statistics, top coins, top countries and recent placements.',
+      contributions: [
+        'Built the public wall, the pixel selection and purchase flow, and the administration panel.',
+        'Integrated payment gateways and cryptocurrency market data.',
+      ],
+      architecture: [
+        'PHP and MySQL application with a jQuery and Bootstrap front end.',
+        'Coordinate-based pixel selection with bulk select and release of pixel blocks.',
+        'Payment integrations for Stripe, PayPal (IPN) and Coinbase Commerce, with server-side notification handling.',
+        'Cryptocurrency data from the CoinMarketCap API, plus CSV import for bulk updates.',
+      ],
+      features: [
+        { label: 'Interactive pixel selection and purchase', status: 'live' },
+        { label: 'Placements linked to a cryptocurrency, exchange and country', status: 'live' },
+        { label: 'Live statistics: pixels placed and remaining, top coins, top countries', status: 'live' },
+        { label: 'Recent placements and pixel detail views', status: 'live' },
+        { label: 'Buy-all and contact enquiry forms', status: 'live' },
+        { label: 'Admin panel: cryptocurrencies, exchanges, countries, pixel approvals and users', status: 'live' },
       ],
     },
   },

@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerFast, slideFromLeft, crackIn } from '../lib/motion';
 import SectionHeader from './SectionHeader';
+import { APPS_BUILT } from '../data/development';
 import './About.css';
 
 const facts = [
   { label: 'Role', value: 'Full-Stack Software Engineer', note: 'Backend · SaaS · API & AI integration' },
+  { label: 'Track record', value: `${APPS_BUILT} web applications`, note: 'Business systems, SaaS, portals and custom platforms' },
   { label: 'Ventures', value: 'ReviewPulse · TravelPayy', note: 'Founder and technical lead' },
   { label: 'Education', value: 'B.Sc. (Ed.) Computer Science', note: 'Tai Solarin University of Education' },
   { label: 'Based in', value: 'Ogun, Nigeria', note: 'Open to remote and international roles' },
@@ -40,13 +42,18 @@ export default function About() {
           <div className="about-grid">
             <motion.div className="about-main" variants={slideFromLeft}>
               <p className="about-lead">
-                I am a full-stack software engineer and technology entrepreneur. I design, build and maintain web
-                applications, SaaS platforms, backend systems and API integrations.
+                Full-Stack Software Engineer with extensive experience designing, developing and maintaining custom
+                web applications, SaaS platforms, business management systems and database-driven solutions.
               </p>
               <p>
-                My work combines hands-on engineering with product thinking. As founder and technical lead of{' '}
-                <strong>ReviewPulse</strong>, a reputation-management SaaS, and <strong>TravelPayy</strong>, a
-                peer-to-peer logistics platform under ROUTYY Limited, I take products from idea to working software.
+                I have built over 100 web applications, ranging from multi-user management platforms and operational
+                systems to customer portals and business automation tools, developed independently and end to end for
+                businesses across different industries. These include a complete camp management system for a client in
+                the USA and a business portal for a company in the UK.
+              </p>
+              <p>
+                I am also founder and technical lead of <strong>ReviewPulse</strong>, a reputation-management SaaS, and{' '}
+                <strong>TravelPayy</strong>, a peer-to-peer logistics platform under ROUTYY Limited.
               </p>
               <blockquote className="about-philosophy">
                 <p>

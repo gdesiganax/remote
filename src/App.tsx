@@ -223,7 +223,7 @@ function App() {
           <About />
           <Skills />
           <Projects />
-          <Experience />
+          <Experience onNavigate={handleNavigate} />
           <AI />
           <Creative />
           <Contact />

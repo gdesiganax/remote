@@ -1,7 +1,8 @@
 import { useId, useState } from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerFast, crackIn } from '../lib/motion';
+import { staggerContainer, staggerFast, crackIn, fadeUp } from '../lib/motion';
 import { projects, type FeatureStatus, type Project } from '../data/projects';
+import { APPS_BUILT, devCategories } from '../data/development';
 import SectionHeader from './SectionHeader';
 import './Projects.css';
 
@@ -52,6 +53,13 @@ function CaseStudyCard({ project, index }: { project: Project; index: number }) 
             {project.name}
           </h3>
           <p className="project-role">{project.role}</p>
+          {(project.client || project.period) && (
+            <p className="project-client">
+              {project.client}
+              {project.client && project.period && <span aria-hidden="true"> · </span>}
+              {project.period}
+            </p>
+          )}
           <p className="project-desc">{project.description}</p>
           <ExternalLinks project={project} />
         </div>
@@ -70,7 +78,7 @@ function CaseStudyCard({ project, index }: { project: Project; index: number }) 
         <div className="case-shots">
           {shots.map((s) => (
             <figure key={s.src}>
-              <img src={s.src} alt={s.alt} loading="lazy" decoding="async" />
+              <img src={s.src} alt={s.alt} loading="lazy" decoding="async" width={1424} height={884} />
             </figure>
           ))}
         </div>
@@ -125,22 +133,24 @@ function CaseStudyCard({ project, index }: { project: Project; index: number }) 
             </div>
           </section>
 
-          <section className="case-block case-block-wide">
-            <h4>Technical challenges</h4>
-            <dl className="challenge-list">
-              {cs.challenges.map((c) => (
-                <div key={c.title} className="challenge">
-                  <dt>{c.title}</dt>
-                  <dd>{c.detail}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
+          {cs.challenges && cs.challenges.length > 0 && (
+            <section className="case-block case-block-wide">
+              <h4>Technical challenges</h4>
+              <dl className="challenge-list">
+                {cs.challenges.map((c) => (
+                  <div key={c.title} className="challenge">
+                    <dt>{c.title}</dt>
+                    <dd>{c.detail}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
         </div>
       </div>
 
       <span className="project-index" aria-hidden="true">
-        0{index + 1}
+        {String(index + 1).padStart(2, '0')}
       </span>
     </motion.article>
   );
@@ -191,7 +201,7 @@ export default function Projects() {
             number="04"
             kicker="The Battleground"
             title="Featured Projects"
-            lead="Products I have founded and built. Each case study covers my role, the architecture, what is live today and what is still planned."
+            lead={`A selection from ${APPS_BUILT} web applications I have built: my own products and systems developed independently for clients in the USA and UK. Each case study covers my role, the architecture and what is live.`}
           />
 
           <motion.div className="case-stack" variants={staggerFast}>
@@ -201,12 +211,42 @@ export default function Projects() {
           </motion.div>
 
           {others.length > 0 && (
-            <motion.div className="projects-grid" variants={staggerFast}>
-              {others.map((p) => (
-                <CompactCard key={p.id} project={p} />
-              ))}
-            </motion.div>
+            <>
+              <motion.h3 className="projects-subhead" variants={fadeUp}>
+                Ventures
+              </motion.h3>
+              <motion.div className="projects-grid" variants={staggerFast}>
+                {others.map((p) => (
+                  <CompactCard key={p.id} project={p} />
+                ))}
+              </motion.div>
+            </>
           )}
+
+          <motion.section className="dev-experience" variants={fadeUp} aria-labelledby="dev-experience-heading">
+            <div className="dev-head">
+              <h3 id="dev-experience-heading" className="projects-subhead">
+                Development Experience
+              </h3>
+              <p className="dev-lead">
+                <strong>{APPS_BUILT} web applications</strong> built independently for businesses across different
+                industries, beyond the case studies above. The kinds of systems I deliver:
+              </p>
+            </div>
+            <ul className="dev-grid">
+              {devCategories.map((c) => (
+                <li key={c.id} className="dev-card">
+                  <h4>{c.title}</h4>
+                  <p>{c.summary}</p>
+                  <ul className="dev-examples" aria-label={`${c.title} examples`}>
+                    {c.examples.map((e) => (
+                      <li key={e}>{e}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </motion.section>
         </motion.div>
       </div>
     </section>

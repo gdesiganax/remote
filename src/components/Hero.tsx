@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, sliceIn, kickerReveal } from '../lib/motion';
 import { RESUME_URL, SOCIAL_LINKS } from '../lib/site';
+import { APPS_BUILT } from '../data/development';
 import './Hero.css';
 
 interface HeroProps {
@@ -36,12 +37,12 @@ export default function Hero({ onNavigate }: HeroProps) {
 
           <motion.h1 className="hero-name" variants={fadeUp}>
             Afeez Lukmon Bamidele
-            <span className="sr-only">, Full-Stack Software Engineer</span>
+            <span className="sr-only">, Full-Stack Software Engineer who has built {APPS_BUILT} web applications</span>
           </motion.h1>
 
           <div className="slice-heading-wrap hero-title-wrap">
             <motion.p className="hero-headline slice-heading" variants={sliceIn}>
-              Backend systems and SaaS products,
+              Business systems and SaaS products,
               <br />
               <span className="accent">built with precision.</span>
             </motion.p>
@@ -60,13 +61,14 @@ export default function Hero({ onNavigate }: HeroProps) {
           </div>
 
           <motion.p className="hero-role" variants={fadeUp}>
-            Full-Stack Software Engineer · Backend &amp; API Development · SaaS · AI Integration
+            Full-Stack Software Engineer · {APPS_BUILT} Web Applications Built · SaaS, Business Systems &amp; Custom
+            Platforms
           </motion.p>
 
           <motion.p className="hero-desc" variants={fadeUp}>
-            Founder and lead developer of <strong>ReviewPulse</strong> and <strong>TravelPayy</strong>. I design
-            data models, APIs and third-party integrations, including Google, payments and AI, and ship them as
-            working products.
+            I design, build and maintain custom web applications, SaaS platforms and business management systems,
+            from multi-user operational platforms to customer portals and automation tools. Independently delivered
+            for clients in the USA and UK, and founder of <strong>ReviewPulse</strong> and <strong>TravelPayy</strong>.
           </motion.p>
 
           <motion.div className="hero-actions" variants={fadeUp}>
@@ -88,8 +90,8 @@ export default function Hero({ onNavigate }: HeroProps) {
 
           <motion.dl className="hero-meta" variants={fadeUp}>
             <div className="meta-item">
-              <dt className="meta-label">Specialism</dt>
-              <dd className="meta-value">Backend · SaaS · APIs</dd>
+              <dt className="meta-label">Applications built</dt>
+              <dd className="meta-value">{APPS_BUILT} independently</dd>
             </div>
             <div className="meta-item">
               <dt className="meta-label">Core stack</dt>

@@ -5,9 +5,10 @@
 /* ───────── Shared bits ───────── */
 .project-top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   margin-bottom: 0.9rem;
 }
 
@@ -45,6 +46,13 @@
   font-size: 0.85rem;
   color: var(--gold);
   margin-bottom: 0.9rem;
+}
+
+.project-client {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: -0.5rem 0 0.9rem;
 }
 
 .project-desc {
@@ -171,6 +179,7 @@
 }
 
 .case-shots {
+  max-width: 860px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.75rem;
@@ -187,7 +196,7 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1424 / 884;
   object-fit: cover;
   object-position: top;
 }
@@ -340,6 +349,97 @@
   flex: 1;
 }
 
+/* ───────── Sub-sections ───────── */
+.projects-subhead {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 2.5rem 0 1rem;
+}
+
+.dev-experience {
+  margin-top: 1rem;
+}
+
+.dev-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 1.25rem;
+}
+
+.dev-head .projects-subhead {
+  margin-bottom: 0.6rem;
+}
+
+.dev-lead {
+  max-width: 720px;
+  font-size: 0.97rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.dev-lead strong {
+  color: var(--offwhite);
+  font-weight: 500;
+}
+
+.dev-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.dev-card {
+  background: var(--card);
+  padding: 1.35rem 1.4rem;
+  transition: background 0.3s ease;
+}
+
+.dev-card:hover {
+  background: color-mix(in srgb, var(--card) 88%, var(--crimson));
+}
+
+.dev-card h4 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.dev-card > p {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+
+.dev-examples {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.dev-examples li {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  color: var(--offwhite);
+  opacity: 0.8;
+}
+
+@media (max-width: 960px) {
+  .dev-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
   .case-head,
   .case-grid,
@@ -350,5 +450,20 @@
 
   .case-head {
     gap: 1.25rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .dev-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-badge {
+    white-space: normal;
+  }
+
+  /* keep the faint index number clear of the badge on narrow cards */
+  .project-index {
+    font-size: 2.2rem;
   }
 }
