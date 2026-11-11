@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { MotionConfig } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import Navbar from './components/Navbar';
@@ -10,10 +10,9 @@ import Experience from './components/Experience';
 import AI from './components/AI';
 import Creative from './components/Creative';
 import Contact from './components/Contact';
+import TransitionCounter from './components/TransitionCounter';
 import { playSlashSound, unlockAudio } from './lib/sound';
 import { SECTIONS, prefersReducedMotion } from './lib/site';
-import { currentSectionIndex, useSectionScroll, type NavigateOptions } from './lib/useSectionScroll';
-import TransitionCounter from './components/TransitionCounter';
 import './App.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -23,17 +22,21 @@ const TRANSITION_MS = 2000;
 /** Moment the panels fully cover the screen (25% of the duration) plus a small margin. */
 const COVERED_AT = 560;
 
-const getSectionInView = (): string => SECTIONS[currentSectionIndex()].id;
+const isSection = (id: string) => SECTIONS.some((s) => s.id === id);
+
+/** Start on the page named in the URL hash (e.g. /#projects), otherwise Home. */
+function initialPage(): string {
+  const hash = typeof window === 'undefined' ? '' : window.location.hash.slice(1);
+  return isSection(hash) ? hash : 'home';
+}
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [revealed, setRevealed] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [page, setPage] = useState(initialPage);
   const [transitioning, setTransitioning] = useState(false);
   const [chapterFlash, setChapterFlash] = useState<{ num: string; name: string } | null>(null);
-  const lastSectionRef = useRef('home');
-  const soundEnabledRef = useRef(false);
-  const cooldownRef = useRef(0);
+  const pageRef = useRef(page);
   const navigatingRef = useRef(false);
   const navTimersRef = useRef<number[]>([]);
 
@@ -47,127 +50,83 @@ function App() {
 
   // Unlock audio on first user interaction (required by browsers)
   useEffect(() => {
-    const unlock = () => {
-      void unlockAudio();
-      soundEnabledRef.current = true;
-    };
+    const unlock = () => void unlockAudio();
     const opts = { once: true, passive: true } as const;
     window.addEventListener('pointerdown', unlock, opts);
     window.addEventListener('keydown', unlock, opts);
     window.addEventListener('touchstart', unlock, opts);
-    // Also unlock on first real scroll gesture
-    window.addEventListener('wheel', unlock, opts);
-    window.addEventListener('touchmove', unlock, opts);
     return () => {
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('keydown', unlock);
       window.removeEventListener('touchstart', unlock);
-      window.removeEventListener('wheel', unlock);
-      window.removeEventListener('touchmove', unlock);
     };
   }, []);
 
-  // Scroll-driven section detection + sound
-  useEffect(() => {
-    if (isLoading) return;
-
-    let ticking = false;
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
-        if (navigatingRef.current) return;
-
-        const id = getSectionInView();
-        setActiveSection(id);
-
-        if (id !== lastSectionRef.current) {
-          lastSectionRef.current = id;
-          const now = Date.now();
-          if (soundEnabledRef.current && now - cooldownRef.current > 500) {
-            cooldownRef.current = now;
-            playSlashSound();
-          }
-        }
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    // Initial sync without sound
-    lastSectionRef.current = getSectionInView();
-    setActiveSection(lastSectionRef.current);
-
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [isLoading]);
-
-  const handleNavigate = useCallback((id: string, opts: NavigateOptions = {}) => {
-    const { align = 'start', focus = true } = opts;
-    // Ignore clicks while a transition is already running
-    if (navigatingRef.current) return;
-    const section = SECTIONS.find((s) => s.id === id);
-    const el = document.getElementById(id);
-    clearNavTimers();
-    void unlockAudio();
-    soundEnabledRef.current = true;
-    cooldownRef.current = Date.now();
-    lastSectionRef.current = id;
-    setActiveSection(id);
-
-    const jump = (behavior: ScrollBehavior) => {
-      if (!el) return;
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      const tall = el.offsetHeight > window.innerHeight;
-      // Moving up into a tall section lands at its end, so nothing is skipped
-      const y = align === 'end' && tall ? top + el.offsetHeight - window.innerHeight : top;
-      window.scrollTo({ top: y, behavior });
-    };
-
-    const focusTarget = () => {
-      // Move keyboard / screen-reader focus to the section heading area
-      if (focus && el) {
+  /** Show a page: swap it in, start at its top and move focus to it. */
+  const showPage = useCallback((id: string) => {
+    pageRef.current = id;
+    setPage(id);
+    window.history.replaceState(null, '', id === 'home' ? window.location.pathname : `#${id}`);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    // Focus the new page after it renders, for keyboard and screen-reader users
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id);
+      if (el) {
         el.setAttribute('tabindex', '-1');
         el.focus({ preventScroll: true });
       }
+    });
+  }, []);
+
+  const handleNavigate = useCallback(
+    (id: string) => {
+      if (navigatingRef.current || !isSection(id)) return;
+      // Same page: just return to its top
+      if (id === pageRef.current) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const section = SECTIONS.find((s) => s.id === id);
+      clearNavTimers();
+      void unlockAudio();
+
+      // Reduced motion: switch instantly, no overlay
+      if (prefersReducedMotion()) {
+        showPage(id);
+        return;
+      }
+
+      navigatingRef.current = true;
+      setTransitioning(true);
+      playSlashSound();
+      if (section) setChapterFlash({ num: section.num, name: section.name });
+
+      navTimersRef.current.push(
+        window.setTimeout(() => {
+          // Screen is fully covered here: swap pages out of sight
+          showPage(id);
+          navTimersRef.current.push(
+            window.setTimeout(() => {
+              setTransitioning(false);
+              setChapterFlash(null);
+              navigatingRef.current = false;
+            }, TRANSITION_MS - COVERED_AT),
+          );
+        }, COVERED_AT),
+      );
+    },
+    [clearNavTimers, showPage],
+  );
+
+  // Hash links (e.g. a pasted /#contact URL or an in-page href) open that page
+  useEffect(() => {
+    const onHash = () => {
+      const id = window.location.hash.slice(1);
+      if (isSection(id) && id !== pageRef.current) handleNavigate(id);
     };
-
-    // Reduced motion: jump straight there, no slash overlay
-    if (prefersReducedMotion()) {
-      jump('auto');
-      focusTarget();
-      return;
-    }
-
-    navigatingRef.current = true;
-    setTransitioning(true);
-    playSlashSound();
-    if (section) setChapterFlash({ num: section.num, name: section.name });
-
-    navTimersRef.current.push(
-      window.setTimeout(() => {
-        // Screen is fully covered here: jump instantly, no visible scroll
-        jump('instant');
-        focusTarget();
-        navTimersRef.current.push(
-          window.setTimeout(() => {
-            setTransitioning(false);
-            setChapterFlash(null);
-            navigatingRef.current = false;
-          }, TRANSITION_MS - COVERED_AT),
-        );
-      }, COVERED_AT),
-    );
-  }, [clearNavTimers]);
-
-  // Scrolling past a section edge (wheel, swipe, keyboard) runs the same transition
-  const [reducedMotion] = useState(prefersReducedMotion);
-  useSectionScroll({
-    enabled: !isLoading && !reducedMotion,
-    transitionMs: TRANSITION_MS,
-    isNavigating: () => navigatingRef.current,
-    navigate: handleNavigate,
-  });
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, [handleNavigate]);
 
   const handleReveal = useCallback(() => {
     window.scrollTo(0, 0);
@@ -178,6 +137,19 @@ function App() {
     setRevealed(true);
     setIsLoading(false);
   }, []);
+
+  // Every page stays mounted (so form input and expanded case studies survive
+  // switching); only the current one is shown.
+  const pages: Record<string, ReactNode> = {
+    home: <Hero onNavigate={handleNavigate} />,
+    about: <About />,
+    skills: <Skills />,
+    projects: <Projects />,
+    experience: <Experience onNavigate={handleNavigate} />,
+    ai: <AI />,
+    creative: <Creative />,
+    contact: <Contact />,
+  };
 
   return (
     <MotionConfig reducedMotion="user">
@@ -202,31 +174,14 @@ function App() {
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Navbar onNavigate={handleNavigate} activeSection={activeSection} />
-
-        <nav className="section-dots" aria-label="Section navigation">
-          {SECTIONS.map((s) => (
-            <button
-              type="button"
-              key={s.id}
-              className={`dot ${activeSection === s.id ? 'active' : ''}`}
-              onClick={() => handleNavigate(s.id)}
-              aria-label={`${s.num} ${s.label}`}
-              aria-current={activeSection === s.id ? 'location' : undefined}
-              title={`${s.num} ${s.label}`}
-            />
-          ))}
-        </nav>
+        <Navbar onNavigate={handleNavigate} activeSection={page} />
 
         <main id="main" tabIndex={-1}>
-          <Hero onNavigate={handleNavigate} />
-          <About />
-          <Skills />
-          <Projects />
-          <Experience onNavigate={handleNavigate} />
-          <AI />
-          <Creative />
-          <Contact />
+          {SECTIONS.map((s) => (
+            <div key={s.id} className="page" hidden={page !== s.id}>
+              {pages[s.id]}
+            </div>
+          ))}
         </main>
 
         <footer className="footer">

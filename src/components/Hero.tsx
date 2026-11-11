@@ -115,15 +115,6 @@ export default function Hero({ onNavigate }: HeroProps) {
           </motion.ul>
         </motion.div>
       </div>
-
-      <button
-        className="scroll-indicator"
-        onClick={() => onNavigate('about')}
-        aria-label="Scroll to about section"
-      >
-        <span aria-hidden="true">Scroll</span>
-        <span className="scroll-line" aria-hidden="true" />
-      </button>
     </section>
   );
 }

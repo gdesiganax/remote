@@ -100,8 +100,6 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: var(--section-pad) 0;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   transition: background 0.4s ease;
 }
 

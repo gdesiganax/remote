@@ -177,42 +177,6 @@
   color: var(--crimson);
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: 2.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  cursor: pointer;
-  z-index: 2;
-  transition: color 0.25s;
-}
-
-.scroll-indicator:hover {
-  color: var(--offwhite);
-}
-
-.scroll-line {
-  width: 1px;
-  height: 36px;
-  background: linear-gradient(to bottom, var(--crimson), transparent);
-  animation: scroll-pulse 2s ease-in-out infinite;
-}
-
-@keyframes scroll-pulse {
-  0%, 100% { opacity: 0.5; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.15); }
-}
-
 @media (max-width: 600px) {
   .hero-meta {
     gap: 1.4rem;
@@ -220,9 +184,6 @@
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
-  }
-  .hero {
-    padding-bottom: 6rem;
   }
 }
 
