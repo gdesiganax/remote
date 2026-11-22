@@ -52,6 +52,8 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
   '.woff2': 'font/woff2',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 const SECURITY_HEADERS = {
@@ -256,12 +258,30 @@ async function serveStatic(req, res) {
 
   const ext = extname(file).toLowerCase();
   const immutable = pathname.startsWith('/assets/');
-  res.writeHead(200, {
+  const headers = {
     ...SECURITY_HEADERS,
     'Content-Type': MIME[ext] || 'application/octet-stream',
-    'Content-Length': info.size,
+    'Accept-Ranges': 'bytes',
     'Cache-Control': immutable ? 'public, max-age=31536000, immutable' : ext === '.html' ? 'no-cache' : 'public, max-age=86400',
-  });
+  };
+
+  // Byte-range requests (needed for video seeking/streaming, and by Safari to play video at all)
+  const range = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || ''));
+  if (range && (range[1] || range[2])) {
+    let start = range[1] ? Number(range[1]) : info.size - Number(range[2]);
+    let end = range[1] && range[2] ? Number(range[2]) : info.size - 1;
+    start = Math.max(0, start);
+    end = Math.min(end, info.size - 1);
+    if (start > end || start >= info.size) {
+      res.writeHead(416, { ...SECURITY_HEADERS, 'Content-Range': `bytes */${info.size}` });
+      return res.end();
+    }
+    res.writeHead(206, { ...headers, 'Content-Range': `bytes ${start}-${end}/${info.size}`, 'Content-Length': end - start + 1 });
+    if (req.method === 'HEAD') return res.end();
+    return createReadStream(file, { start, end }).pipe(res);
+  }
+
+  res.writeHead(200, { ...headers, 'Content-Length': info.size });
   if (req.method === 'HEAD') return res.end();
   createReadStream(file).pipe(res);
 }

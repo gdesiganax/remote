@@ -48,6 +48,13 @@ function App() {
   // Clear any pending navigation timeouts on unmount
   useEffect(() => clearNavTimers, [clearNavTimers]);
 
+  // An old /#section link still opens that page, then the hash is dropped from the URL
+  useEffect(() => {
+    if (isSection(window.location.hash.slice(1))) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
+
   // Unlock audio on first user interaction (required by browsers)
   useEffect(() => {
     const unlock = () => void unlockAudio();
@@ -66,7 +73,8 @@ function App() {
   const showPage = useCallback((id: string) => {
     pageRef.current = id;
     setPage(id);
-    window.history.replaceState(null, '', id === 'home' ? window.location.pathname : `#${id}`);
+    // Keep the address bar on the base URL (no #section added)
+    if (window.location.hash) window.history.replaceState(null, '', window.location.pathname + window.location.search);
     window.scrollTo({ top: 0, behavior: 'instant' });
     // Focus the new page after it renders, for keyboard and screen-reader users
     requestAnimationFrame(() => {

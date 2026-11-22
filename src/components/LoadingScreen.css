@@ -10,6 +10,9 @@
   overflow: hidden;
   color: #e8e5df;
   background: transparent;
+  /* No swiping/scrolling the page underneath (iOS ignores overflow:hidden on touch) */
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 /* Two halves share the same scene; split along a diagonal for the slice */
@@ -326,4 +329,216 @@
 .loading-screen.reduced.phase-slicing .ls-half {
   transform: none;
   opacity: 0;
+}
+
+/* ───────── Intro film ─────────
+   Plays full-screen above the intro; the ring/text stay hidden until it ends. */
+.loading-screen.video-playing .ls-content,
+.loading-screen.video-playing .corner {
+  display: none; /* re-showing restarts the ls-rise entrance */
+}
+
+.ls-video {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  /* Soft dark-crimson ambience so the film's edges melt into the screen */
+  background: radial-gradient(ellipse at center, #120a0d 0%, #050304 55%, #000 100%);
+  opacity: 1;
+  transition: opacity 0.7s ease; /* keep in sync with VIDEO_FADE_MS */
+}
+
+.ls-video.leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Film box = the largest 16:9 area that fits the screen, so nothing is cropped.
+   Its edges fade to transparent, blending into the background instead of hard bars. */
+.ls-video-media,
+.ls-frame::after {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, calc(100vh * 16 / 9));
+  width: min(100vw, calc(100dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  height: auto;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.ls-video-media {
+  object-fit: cover; /* box already matches the film's ratio: no crop, no distortion */
+}
+
+/* Darkens the top so the controls stay legible */
+.ls-video-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0, transparent 16%);
+}
+
+/* Controls: small, top-right */
+.ls-video-controls {
+  position: absolute;
+  top: max(20px, env(safe-area-inset-top));
+  right: max(24px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: opacity 0.3s ease;
+}
+
+.ls-video-controls.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ls-video-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 36px;
+  padding: 0 0.85rem;
+  border: 1px solid rgba(197, 164, 109, 0.45);
+  border-radius: 999px;
+  background: rgba(5, 5, 6, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #c5a46d;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ls-icon-btn {
+  width: 36px;
+  padding: 0;
+}
+
+.ls-video-btn:hover {
+  border-color: #c5a46d;
+  background: rgba(5, 5, 6, 0.75);
+  color: #e8e5df;
+}
+
+.ls-video-btn:focus-visible {
+  outline: 2px solid #c5a46d;
+  outline-offset: 3px;
+}
+
+/* Sound on: katana-red accent so the state reads at a glance */
+.ls-sound.on {
+  border-color: #d42a37;
+  color: #e8e5df;
+  box-shadow: 0 0 12px rgba(181, 31, 43, 0.5);
+}
+
+.ls-skip:hover {
+  border-color: #d42a37;
+  box-shadow: 0 0 12px rgba(181, 31, 43, 0.45);
+}
+
+/* Thin progress line along the bottom edge */
+.ls-video-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(232, 229, 223, 0.08);
+}
+
+.ls-video-progress span {
+  display: block;
+  height: 100%;
+  background: #b51f2b;
+  box-shadow: 0 0 8px rgba(181, 31, 43, 0.9);
+  transform-origin: left;
+  transition: transform 0.25s linear;
+}
+
+/* ───────── Final frame behind the ENTER ring ─────────
+   Same box and edge blend as the film so the hand-over is seamless. It is dimmed
+   and softened so the ring and name clearly lead, then sharpens on Enter. */
+.ls-frame {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #120a0d 0%, #050304 55%, #000 100%);
+  filter: brightness(0.32) saturate(0.75) blur(5px);
+  transform: scale(1.02); /* hides the blur's soft outer rim */
+  transition: filter 0.9s ease, transform 0.9s ease;
+}
+
+.ls-frame::after {
+  content: '';
+  background-image: var(--ls-frame);
+  background-size: cover;
+  background-position: center;
+}
+
+.phase-entering .ls-frame,
+.phase-slicing .ls-frame {
+  filter: brightness(1) saturate(1) blur(0);
+  transform: scale(1);
+}
+
+/* Dark halo behind the ring and name so they stand clear of the frame's text */
+.has-frame .ls-content::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -110px -170px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.55) 55%, transparent);
+  pointer-events: none;
+}
+
+.has-frame .ls-ring {
+  background: rgba(5, 5, 6, 0.7);
+  box-shadow: 0 0 40px rgba(181, 31, 43, 0.35);
+}
+
+.has-frame .ls-enter {
+  color: #e2c48e;
+  text-shadow: 0 0 22px rgba(197, 164, 109, 0.85);
+}
+
+.has-frame .ls-name {
+  font-size: 1rem;
+  color: #e2c48e;
+  text-shadow: 0 2px 14px #000;
+}
+
+.has-frame .ls-hint {
+  color: rgba(232, 229, 223, 0.9);
+  text-shadow: 0 1px 10px #000;
+}
+
+/* ───────── Mobile: portrait image as a full-cover background (no film) ─────────
+   Keep in sync with MOBILE_QUERY in LoadingScreen.tsx. */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 500px) {
+  .ls-image::after {
+    inset: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    background-size: cover;
+    background-position: center 20%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
